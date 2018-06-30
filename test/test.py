@@ -3,12 +3,14 @@ from upbitpy import Upbitpy
 from datetime import datetime
 import logging
 
+
 def print_json_data(data):
   if data is None:
     print('No data')
     return
   for key in data.keys():
     print('[%s] %s' % (key, data[key]))
+
 
 def print_json_data_list(json_list):
   if json_list is None:
@@ -21,6 +23,7 @@ def print_json_data_list(json_list):
 
 
 logging.basicConfig(level=logging.DEBUG)
+upbitpy = Upbitpy()
 # upbitpy = Upbitpy('input access key', 'input secret')
 
 ###############################################################
@@ -65,7 +68,7 @@ logging.basicConfig(level=logging.DEBUG)
 ###############################################################
 
 # get market all
-# print_json_data_list(upbitpy.get_market_all())
+print_json_data_list(upbitpy.get_market_all())
 
 # get candles - minutes
 # print_json_data_list(upbitpy.get_minutes_candles(240, 'KRW-QTUM'))

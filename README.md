@@ -8,6 +8,12 @@ $ pip install pyjwt
 $ pip install requests
 ```
 
+## Build/Install
+```bash
+$ python setup.py build
+$ python setup.py install
+``` 
+
 ## Usage
 ```python
 from upbitpy import Upbitpy
@@ -18,4 +24,4 @@ for ticker in tickers:
   print('%s trade price : %d' % (ticker['market'], ticker['trade_price']))
 ```
 
-Please refer test.py for more samples
+Please refer test/test.py for more samples
