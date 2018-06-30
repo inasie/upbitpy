@@ -7,7 +7,6 @@ import logging
 from urllib.parse import urlencode
 
 
-# https://github.com/inasie/upbitpy
 # https://docs.upbit.com/v1.0/reference
 class Upbitpy():
   def __init__(self, access_key=None, secret=None):
