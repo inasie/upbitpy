@@ -1,25 +1,25 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 from upbitpy import Upbitpy
 from datetime import datetime
 import logging
 
 
 def print_json_data(data):
-  if data is None:
-    print('No data')
-    return
-  for key in data.keys():
-    print('[%s] %s' % (key, data[key]))
+    if data is None:
+        print('No data')
+        return
+    for key in data.keys():
+        print('[%s] %s' % (key, data[key]))
 
 
 def print_json_data_list(json_list):
-  if json_list is None:
-    print('No json_list')
-    return
-  for data in json_list:
+    if json_list is None:
+        print('No json_list')
+        return
+    for data in json_list:
+        print('==============================')
+        print_json_data(data)
     print('==============================')
-    print_json_data(data)
-  print('==============================')
 
 
 logging.basicConfig(level=logging.DEBUG)
