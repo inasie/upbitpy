@@ -20,7 +20,8 @@ class Upbitpy():
             logging.error('get(%s) failed(%d)' % (url, resp.status_code))
             if resp.text is not None:
                 logging.error('resp: %s' % resp.text)
-            return None
+                raise Exception('request.get() failed(%s)' % resp.text)
+            raise Exception('request.get() failed(status_code:%d)' % result_code)
         return json.loads(resp.text)
 
     def _post(self, url, headers, data, result_code=200):
@@ -28,8 +29,8 @@ class Upbitpy():
         if resp.status_code != result_code:
             logging.error('post(%s) failed(%d)' % (url, resp.status_code))
             if resp.text is not None:
-                logging.error('resp: %s' % resp.text)
-            return None
+                raise Exception('request.post() failed(%s)' % resp.text)
+            raise Exception('request.post() failed(status_code:%d)' % result_code)
         return json.loads(resp.text)
 
     def _delete(self, url, headers, data, result_code=200):
@@ -37,8 +38,8 @@ class Upbitpy():
         if resp.status_code != result_code:
             logging.error('delete(%s) failed(%d)' % (url, resp.status_code))
             if resp.text is not None:
-                logging.error('resp: %s' % resp.text)
-            return None
+                raise Exception('request.delete() failed(%s)' % resp.text)
+            raise Exception('request.delete() failed(status_code:%d)' % result_code)
         return json.loads(resp.text)
 
     def _load_markets(self):
@@ -52,7 +53,7 @@ class Upbitpy():
             return markets
         except Exception as e:
             logging.error(e)
-            return None
+            raise Exception(e)
 
     def _get_token(self, query):
         payload = {
@@ -79,7 +80,7 @@ class Upbitpy():
             return self._get(URL, self._get_headers())
         except Exception as e:
             logging.error(e)
-            return None
+            raise Exception(e)
 
     # https://docs.upbit.com/v1.0/reference#%EC%A3%BC%EB%AC%B8-%EA%B0%80%EB%8A%A5-%EC%A0%95%EB%B3%B4
 
@@ -88,12 +89,12 @@ class Upbitpy():
         try:
             if market not in self.markets:
                 logging.error('invalid market: %s' % market)
-                return None
+                raise Exception('invalid market: %s' % market)
             data = {'market': market}
             return self._get(URL, self._get_headers(data), data)
         except Exception as e:
             logging.error(e)
-            return None
+            raise Exception(e)
 
     # https://docs.upbit.com/v1.0/reference#%EA%B0%9C%EB%B3%84-%EC%A3%BC%EB%AC%B8-%EC%A1%B0%ED%9A%8C
 
@@ -104,7 +105,7 @@ class Upbitpy():
             return self._get(URL, self._get_headers(data), data)
         except Exception as e:
             logging.error(e)
-            return None
+            raise Exception(e)
 
     # https://docs.upbit.com/v1.0/reference#%EC%A3%BC%EB%AC%B8-%EB%A6%AC%EC%8A%A4%ED%8A%B8-%EC%A1%B0%ED%9A%8C
     # state: 'wait', 'done', 'cancel'
@@ -115,15 +116,15 @@ class Upbitpy():
         try:
             if market not in self.markets:
                 logging.error('invalid market: %s' % market)
-                return None
+                raise Exception('invalid market: %s' % market)
 
             if state not in ['wait', 'done', 'cancel']:
                 logging.error('invalid state: %s' % state)
-                return None
+                raise Exception('invalid state: %s' % state)
 
             if order_by not in ['asc', 'desc']:
                 logging.error('invalid order_by: %s' % order_by)
-                return None
+                raise Exception('invalid order_by: %s' % order_by)
 
             data = {
                 'market': market,
@@ -134,7 +135,7 @@ class Upbitpy():
             return self._get(URL, self._get_headers(data), data)
         except Exception as e:
             logging.error(e)
-            return None
+            raise Exception(e)
 
     # ~10         : 0.01
     # ~100        : 0.1
@@ -183,15 +184,15 @@ class Upbitpy():
         try:
             if market not in self.markets:
                 logging.error('invalid market: %s' % market)
-                return None
+                raise Exception('invalid market: %s' % market)
 
             if side not in ['bid', 'ask']:
                 logging.error('invalid side: %s' % side)
-                return None
+                raise Exception('invalid side: %s' % side)
 
             if not self._is_valid_price(price):
                 logging.error('invalid price: %.2f' % price)
-                return None
+                raise Exception('invalid price: %.2f' % price)
 
             data = {
                 'market': market,
@@ -203,7 +204,7 @@ class Upbitpy():
             return self._post(URL, self._get_headers(data), data, result_code=201)
         except Exception as e:
             logging.error(e)
-            return None
+            raise Exception(e)
 
     # https://docs.upbit.com/v1.0/reference#%EC%A3%BC%EB%AC%B8-%EC%B7%A8%EC%86%8C
 
@@ -214,7 +215,7 @@ class Upbitpy():
             return self._delete(URL, self._get_headers(data), data)
         except Exception as e:
             logging.error(e)
-            return None
+            raise Exception(e)
 
     # https://docs.upbit.com/v1.0/reference#%EC%A0%84%EC%B2%B4-%EC%B6%9C%EA%B8%88-%EC%A1%B0%ED%9A%8C
     # currency: BTC, ...
@@ -233,17 +234,17 @@ class Upbitpy():
             if state is not None:
                 if state not in VALID_STATE:
                     logging.error('invalid state(%s)' % state)
-                    return None
+                    raise Exception('invalid state(%s)' % state)
                 data['state'] = state
             if limit is not None:
                 if limit <= 0 or limit > LIMIT_MAX:
                     logging.error('invalid limit(%d)' % limit)
-                    return None
+                    raise Exception('invalid limit(%d)' % limit)
                 data['limit'] = limit
             return self._get(URL, self._get_headers(data), data)
         except Exception as e:
             logging.error(e)
-            return None
+            raise Exception(e)
 
     # https://docs.upbit.com/v1.0/reference#%EA%B0%9C%EB%B3%84-%EC%B6%9C%EA%B8%88-%EC%A1%B0%ED%9A%8C
 
@@ -254,7 +255,7 @@ class Upbitpy():
             return self._get(URL, self._get_headers(data), data)
         except Exception as e:
             logging.error(e)
-            return None
+            raise Exception(e)
 
     # https://docs.upbit.com/v1.0/reference#%EC%B6%9C%EA%B8%88-%EA%B0%80%EB%8A%A5-%EC%A0%95%EB%B3%B4
 
@@ -265,7 +266,7 @@ class Upbitpy():
             return self._get(URL, self._get_headers(data), data)
         except Exception as e:
             logging.error(e)
-            return None
+            raise Exception(e)
 
     # https://docs.upbit.com/v1.0/reference#%EC%BD%94%EC%9D%B8-%EC%B6%9C%EA%B8%88%ED%95%98%EA%B8%B0
 
@@ -282,7 +283,7 @@ class Upbitpy():
             return self._post(URL, self._get_headers(data), data)
         except Exception as e:
             logging.error(e)
-            return None
+            raise Exception(e)
 
     # https://docs.upbit.com/v1.0/reference#%EC%9B%90%ED%99%94-%EC%B6%9C%EA%B8%88%ED%95%98%EA%B8%B0
 
@@ -293,7 +294,7 @@ class Upbitpy():
             return self._post(URL, self._get_headers(data), data)
         except Exception as e:
             logging.error(e)
-            return None
+            raise Exception(e)
 
     ###############################################################
     # QUOTATION API
@@ -307,7 +308,7 @@ class Upbitpy():
             return self._get(URL)
         except Exception as e:
             logging.error(e)
-            return None
+            raise Exception(e)
 
     # https://docs.upbit.com/v1.0/reference#%EB%B6%84minute-%EC%BA%94%EB%93%A4-1
     # unit: 1, 3, 5, 10, 15, 30, 60, 240
@@ -317,10 +318,10 @@ class Upbitpy():
         try:
             if unit not in [1, 3, 5, 10, 15, 30, 60, 240]:
                 logging.error('invalid unit: %s' % str(unit))
-                return None
+                raise Exception('invalid unit: %s' % str(unit))
             if market not in self.markets:
                 logging.error('invalid market: %s' % market)
-                return None
+                raise Exception('invalid market: %s' % market)
 
             params = {'market': market}
             if to is not None:
@@ -330,7 +331,7 @@ class Upbitpy():
             return self._get(URL, params=params)
         except Exception as e:
             logging.error(e)
-            return None
+            raise Exception(e)
 
     # https://docs.upbit.com/v1.0/reference#%EC%9D%BCday-%EC%BA%94%EB%93%A4-1
 
@@ -339,7 +340,7 @@ class Upbitpy():
         try:
             if market not in self.markets:
                 logging.error('invalid market: %s' % market)
-                return None
+                raise Exception('invalid market: %s' % market)
 
             params = {'market': market}
             if to is not None:
@@ -349,7 +350,7 @@ class Upbitpy():
             return self._get(URL, params=params)
         except Exception as e:
             logging.error(e)
-            return None
+            raise Exception(e)
 
     # https://docs.upbit.com/v1.0/reference#%EC%A3%BCweek-%EC%BA%94%EB%93%A4-1
 
@@ -358,7 +359,7 @@ class Upbitpy():
         try:
             if market not in self.markets:
                 logging.error('invalid market: %s' % market)
-                return None
+                raise Exception('invalid market: %s' % market)
             params = {'market': market}
             if to is not None:
                 params['to'] = to
@@ -367,7 +368,7 @@ class Upbitpy():
             return self._get(URL, params=params)
         except Exception as e:
             logging.error(e)
-            return None
+            raise Exception(e)
 
     # https://docs.upbit.com/v1.0/reference#%EC%9B%94month-%EC%BA%94%EB%93%A4-1
 
@@ -376,7 +377,7 @@ class Upbitpy():
         try:
             if market not in self.markets:
                 logging.error('invalid market: %s' % market)
-                return None
+                raise Exception('invalid market: %s' % market)
             params = {'market': market}
             if to is not None:
                 params['to'] = to
@@ -385,7 +386,7 @@ class Upbitpy():
             return self._get(URL, params=params)
         except Exception as e:
             logging.error(e)
-            return None
+            raise Exception(e)
 
     # https://docs.upbit.com/v1.0/reference#%EC%8B%9C%EC%84%B8-%EC%B2%B4%EA%B2%B0-%EC%A1%B0%ED%9A%8C
 
@@ -394,7 +395,7 @@ class Upbitpy():
         try:
             if market not in self.markets:
                 logging.error('invalid market: %s' % market)
-                return None
+                raise Exception('invalid market: %s' % market)
             params = {'market': market}
             if to is not None:
                 params['to'] = to
@@ -405,7 +406,7 @@ class Upbitpy():
             return self._get(URL, params=params)
         except Exception as e:
             logging.error(e)
-            return None
+            raise Exception(e)
 
     # https://docs.upbit.com/v1.0/reference#%EC%8B%9C%EC%84%B8-ticker-%EC%A1%B0%ED%9A%8C
 
@@ -414,16 +415,16 @@ class Upbitpy():
         try:
             if not isinstance(markets, list):
                 logging.error('invalid parameter: markets should be list')
-                return None
+                raise Exception('invalid parameter: markets should be list')
 
             if len(markets) == 0:
                 logging.error('invalid parameter: no markets')
-                return None
+                raise Exception('invalid parameter: no markets')
 
             for market in markets:
                 if market not in self.markets:
                     logging.error('invalid market: %s' % market)
-                    return None
+                    raise Exception('invalid market: %s' % market)
 
             markets_data = markets[0]
             for market in markets[1:]:
@@ -432,7 +433,7 @@ class Upbitpy():
             return self._get(URL, params=params)
         except Exception as e:
             logging.error(e)
-            return None
+            raise Exception(e)
 
     # https://docs.upbit.com/v1.0/reference#%ED%98%B8%EA%B0%80-%EC%A0%95%EB%B3%B4-%EC%A1%B0%ED%9A%8C
 
@@ -441,16 +442,16 @@ class Upbitpy():
         try:
             if not isinstance(markets, list):
                 logging.error('invalid parameter: markets should be list')
-                return None
+                raise Exception('invalid parameter: markets should be list')
 
             if len(markets) == 0:
                 logging.error('invalid parameter: no markets')
-                return None
+                raise Exception('invalid parameter: no markets')
 
             for market in markets:
                 if market not in self.markets:
                     logging.error('invalid market: %s' % market)
-                    return None
+                    raise Exception('invalid market: %s' % market)
 
             markets_data = markets[0]
             for market in markets[1:]:
@@ -459,4 +460,4 @@ class Upbitpy():
             return self._get(URL, params=params)
         except Exception as e:
             logging.error(e)
-            return None
+            raise Exception(e)
