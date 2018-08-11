@@ -129,7 +129,7 @@ class Upbitpy():
             logging.error('invalid side: %s' % side)
             raise Exception('invalid side: %s' % side)
 
-        if not self._is_valid_price(price):
+        if market.startswith('KRW') and not self._is_valid_price(price):
             logging.error('invalid price: %.2f' % price)
             raise Exception('invalid price: %.2f' % price)
 
