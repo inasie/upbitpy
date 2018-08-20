@@ -140,7 +140,7 @@ class Upbitpy():
             'price': str(price),
             'ord_type': 'limit'
         }
-        return self._post(URL, self._get_headers(data), data, result_code=201)
+        return self._post(URL, self._get_headers(data), data)
 
     def cancel_order(self, uuid):
         '''
@@ -459,35 +459,35 @@ class Upbitpy():
 
     ###############################################################
 
-    def _get(self, url, headers=None, data=None, params=None, result_code=200):
+    def _get(self, url, headers=None, data=None, params=None):
         resp = requests.get(url, headers=headers, data=data, params=params)
-        if resp.status_code != result_code:
+        if resp.status_code not in [200, 201]:
             logging.error('get(%s) failed(%d)' % (url, resp.status_code))
             if resp.text is not None:
                 logging.error('resp: %s' % resp.text)
                 raise Exception('request.get() failed(%s)' % resp.text)
             raise Exception(
-                'request.get() failed(status_code:%d)' % result_code)
+                'request.get() failed(status_code:%d)' % resp.status_code)
         return json.loads(resp.text)
 
-    def _post(self, url, headers, data, result_code=200):
+    def _post(self, url, headers, data):
         resp = requests.post(url, headers=headers, data=data)
-        if resp.status_code != result_code:
+        if resp.status_code not in [200, 201]:
             logging.error('post(%s) failed(%d)' % (url, resp.status_code))
             if resp.text is not None:
                 raise Exception('request.post() failed(%s)' % resp.text)
             raise Exception(
-                'request.post() failed(status_code:%d)' % result_code)
+                'request.post() failed(status_code:%d)' % resp.status_code)
         return json.loads(resp.text)
 
-    def _delete(self, url, headers, data, result_code=200):
+    def _delete(self, url, headers, data):
         resp = requests.delete(url, headers=headers, data=data)
-        if resp.status_code != result_code:
+        if resp.status_code not in [200, 201]:
             logging.error('delete(%s) failed(%d)' % (url, resp.status_code))
             if resp.text is not None:
                 raise Exception('request.delete() failed(%s)' % resp.text)
             raise Exception(
-                'request.delete() failed(status_code:%d)' % result_code)
+                'request.delete() failed(status_code:%d)' % resp.status_code)
         return json.loads(resp.text)
 
     def _load_markets(self):
