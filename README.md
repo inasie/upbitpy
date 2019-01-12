@@ -1,5 +1,7 @@
 # Upbitpy
 
+[![Build Status](https://travis-ci.org/inasie/upbitpy.svg?branch=master)](https://travis-ci.org/inasie/upbitpy)
+
 [Upbit API](https://docs.upbit.com/v1.0/reference) for Python3
 
 ## Install
