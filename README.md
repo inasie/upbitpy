@@ -2,16 +2,9 @@
 
 [Upbit API](https://docs.upbit.com/v1.0/reference) for Python3
 
-## Install dependency packages
+## Install
 ```bash
-$ pip install pyjwt
-$ pip install requests
-```
-
-## Build/Install
-```bash
-$ python setup.py build
-$ python setup.py install
+$ pip3 install upbitpy
 ```
 
 ## Usage

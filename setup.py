@@ -9,9 +9,10 @@ setup(
     author_email='inasie@naver.com',
     license='MIT',
     install_requires=[
-        'requests',
-        'pyjwt',
+        'requests==2.21.0',
+        'pyjwt==1.7.1',
     ],
+    python_requires='>=3',
     packages=find_packages(),
     zip_safe=False
 )
