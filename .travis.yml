@@ -1,0 +1,7 @@
+language: python
+python:
+  - "3.6.7"
+install:
+  - pip install upbitpy
+script:
+  - pytest test/test.py
