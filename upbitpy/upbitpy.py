@@ -4,7 +4,6 @@ import time
 import requests
 import jwt
 import logging
-import websockets
 from urllib.parse import urlencode
 
 
