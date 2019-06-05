@@ -4,6 +4,7 @@ import time
 import requests
 import jwt
 import logging
+from datetime import datetime
 from urllib.parse import urlencode
 
 
@@ -22,6 +23,7 @@ class Upbitpy():
         '''
         self.access_key = access_key
         self.secret = secret
+        self.remaining_req = dict()
         self.markets = self._load_markets()
 
     ###############################################################
@@ -457,7 +459,36 @@ class Upbitpy():
         params = {'markets': markets_data}
         return self._get(URL, params=params)
 
+    def get_remaining_req(self):
+        '''
+        요청 수 제한
+        https://docs.upbit.com/docs/user-request-guide
+        :return: dict
+            ex) {'market': {'min': '582', 'sec': '2', 'update_time': datetime.datetime(2019, 6, 6, 7, 7, 12, 153219)}, 'candles': {'min': '592', 'sec': '6', 'update_time': datetime.datetime(2019, 6, 6, 7, 7, 12, 197177)}}
+            - market 관련 요청은 2019년6월6일 7시7분12.153219초 이후 1분동안 582회, 1초동안 2회 호출 가능
+            - candles 관련 요청은 2019년6월6일 7시7분12.197177초 이후 1분동안 592회, 1초동안 6회 호출 가능
+        '''
+        return self.remaining_req
+
     ###############################################################
+
+    def _update_remaining_req(self, resp):
+        if 'Remaining-Req' not in resp.headers.keys():
+            return None
+        keyvals = resp.headers['Remaining-Req'].split('; ')
+        group = None
+        keyval = dict()
+        for _keyval in keyvals:
+            kv = _keyval.split('=')
+            if kv[0] == 'group':
+                group = kv[1]
+            else:
+                keyval[kv[0]] = kv[1]
+        if group is None:
+            return
+        keyval['update_time'] = datetime.now()
+        self.remaining_req[group] = keyval
+
 
     def _get(self, url, headers=None, data=None, params=None):
         resp = requests.get(url, headers=headers, data=data, params=params)
@@ -468,6 +499,7 @@ class Upbitpy():
                 raise Exception('request.get() failed(%s)' % resp.text)
             raise Exception(
                 'request.get() failed(status_code:%d)' % resp.status_code)
+        self._update_remaining_req(resp)
         return json.loads(resp.text)
 
     def _post(self, url, headers, data):
@@ -478,6 +510,7 @@ class Upbitpy():
                 raise Exception('request.post() failed(%s)' % resp.text)
             raise Exception(
                 'request.post() failed(status_code:%d)' % resp.status_code)
+        self._update_remaining_req(resp)
         return json.loads(resp.text)
 
     def _delete(self, url, headers, data):
@@ -488,6 +521,7 @@ class Upbitpy():
                 raise Exception('request.delete() failed(%s)' % resp.text)
             raise Exception(
                 'request.delete() failed(status_code:%d)' % resp.status_code)
+        self._update_remaining_req(resp)
         return json.loads(resp.text)
 
     def _load_markets(self):
