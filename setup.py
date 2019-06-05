@@ -2,7 +2,7 @@ from setuptools import find_packages, setup
 
 setup(
     name='upbitpy',
-    version='1.0',
+    version='1.0.1',
     description='upbit open API python wrapper',
     url='https://github.com/inasie/upbitpy',
     author='inasie',
