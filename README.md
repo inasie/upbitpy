@@ -19,5 +19,10 @@ for ticker in tickers:
     print('%s trade price : %d' % (ticker['market'], ticker['trade_price']))
 ```
 
-Please refer test/test.py for more samples
+## Samples
 
+[samples/README.md](./samples/README.md)
+
+## TC
+
+Please refer test/test.py
