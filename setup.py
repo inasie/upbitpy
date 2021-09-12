@@ -9,7 +9,7 @@ setup(
     author_email='inasie@naver.com',
     license='MIT',
     install_requires=[
-        'requests==2.21.0',
+        'requests>=2.21.0',
         'pyjwt==1.7.1',
     ],
     python_requires='>=3',
