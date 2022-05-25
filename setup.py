@@ -10,7 +10,7 @@ setup(
     license='MIT',
     install_requires=[
         'requests==2.21.0',
-        'pyjwt==1.7.1',
+        'pyjwt==2.4.0',
     ],
     python_requires='>=3',
     packages=find_packages(),
